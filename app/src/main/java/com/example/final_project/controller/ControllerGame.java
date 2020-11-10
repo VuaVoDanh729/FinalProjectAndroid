@@ -119,7 +119,7 @@ public class ControllerGame {
                 doSth(x-1, y, valueNode);
             }
         }
-        if (x + 1 <= table.length) {
+        if (x + 1 <= table.length-1) {
             if (table[x + 1][y] == valueNode) {
                 doSth(x+1, y, valueNode);
             }
@@ -129,7 +129,7 @@ public class ControllerGame {
                 doSth(x, y-1, valueNode);
             }
         }
-        if (y + 1 <= table.length) {
+        if (y + 1 <= table.length-1) {
             if (table[x][y + 1] == valueNode) {
                 doSth(x, y+1, valueNode);
             }

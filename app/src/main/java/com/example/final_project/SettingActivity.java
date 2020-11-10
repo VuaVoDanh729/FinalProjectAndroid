@@ -23,6 +23,7 @@ public class SettingActivity extends AppCompatActivity {
     int buttonEffect = R.raw.choose_sound;
     EditText textSizeHP;
 
+    // Sound cho bạn cần nài : https://stackoverflow.com/questions/9008770/media-player-called-in-state-0-error-38-0
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

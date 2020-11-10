@@ -1,5 +1,7 @@
 package com.example.final_project;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -39,6 +41,7 @@ public class LocalGameActivity extends AppCompatActivity {
     int buttonEffect = R.raw.choose_sound;
     int playSound = R.raw.play_sound;
 
+    Player player1, player2;
 
     int p = 5, s = 5;
     int time = p * 60 + s;
@@ -65,12 +68,12 @@ public class LocalGameActivity extends AppCompatActivity {
         Init();
     }
 
-    void setting(){
+    void setting() {
         board = new Node[Values.board_size][Values.board_size];
         controller = new Controller(board);
         Bundle bundle = getIntent().getExtras();
-        Player player1 = (Player) bundle.get("player1");
-        Player player2 = (Player) bundle.get("player2");
+        player1 = (Player) bundle.get("player1");
+        player2 = (Player) bundle.get("player2");
 
         layout = findViewById(R.id.table);
         currentChess = findViewById(R.id.curentChess);
@@ -84,6 +87,7 @@ public class LocalGameActivity extends AppCompatActivity {
         timer2 = findViewById(R.id.timer2);
 
 
+        intent = new Intent(this, Winner.class);
         HP1.setProgress(100);
         HP2.setProgress(100);
         name1.setText(player1.getName());
@@ -92,7 +96,9 @@ public class LocalGameActivity extends AppCompatActivity {
         avatar2.setImageResource(player2.getImgId());
         currentChess.setImageResource(defaultColor);
     }
+
     void Init() {
+        int scale_button = Values.board_width / Values.board_size-10;
         for (int i = 0; i < board.length; i++) {
             TableRow row = new TableRow(this);
             for (int j = 0; j < board[0].length; j++) {
@@ -100,13 +106,13 @@ public class LocalGameActivity extends AppCompatActivity {
                 final int y = j;
                 final ImageButton button = new ImageButton(this);
                 button.setImageResource(Values.chess_background_img);
-                TableRow.LayoutParams layout = new TableRow.LayoutParams(110, 110);
+                TableRow.LayoutParams layout = new TableRow.LayoutParams(scale_button, scale_button);
                 button.setLayoutParams(layout);
-                final Node node = new Node(i, j, button, Values.valueEmpty,false);
+                final Node node = new Node(i, j, button, Values.valueEmpty, false);
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if(node.getValue() == Values.valueEmpty){
+                        if (node.getValue() == Values.valueEmpty) {
                             MediaPlayer mPlayer = MediaPlayer.create(getApplication(), playSound);
                             mPlayer.start();
                             button.setImageResource(defaultColor);
@@ -126,12 +132,14 @@ public class LocalGameActivity extends AppCompatActivity {
             layout.addView(row);
         }
     }
+
     private void updateCountDownText() {
         int minutes = (int) (mTimeLeftInMillis / 1000) / 60;
         int seconds = (int) (mTimeLeftInMillis / 1000) % 60;
         String timeLeftFormatted = String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds);
         timer1.setText(timeLeftFormatted);
     }
+
     private void startTimer() {
         mCountDownTimer = new CountDownTimer(mTimeLeftInMillis, 1000) {
             @Override
@@ -147,14 +155,50 @@ public class LocalGameActivity extends AppCompatActivity {
         }.start();
         mTimerRunning = true;
     }
+
     void changeSizeHP(ProgressBar pb) {
         pb.setProgress(pb.getProgress() - hpLost * 10);
     }
+
+
+    Intent intent;
+    static final int REQUEST_CODE_WIN = 729;
+
     void subHP() {
+        boolean is_win = false;
         if (defaultColor == Values.black_chess) {
             changeSizeHP(HP2);
+            if (HP2.getProgress() <= 0) {
+                intent.putExtra("winner", player1);
+                intent.putExtra("loser", player2);
+                is_win = true;
+            }
         } else if (defaultColor == Values.white_chess) {
             changeSizeHP(HP1);
+            if (HP1.getProgress() <= 0) {
+                intent.putExtra("winner", player2);
+                intent.putExtra("loser", player1);
+                is_win = true;
+            }
+        }
+        if (is_win) {
+            startActivityForResult(intent, REQUEST_CODE_WIN);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            if (requestCode == REQUEST_CODE_WIN) {
+                String mess = data.getStringExtra("option");
+                if (mess.equals("newgame")) {
+                    setNewGame();
+                } else if (mess.equals("quit")) {
+                    Intent intent = new Intent(this, MainActivity.class);
+                    startActivity(intent);
+                }
+            }
         }
     }
 
@@ -162,8 +206,12 @@ public class LocalGameActivity extends AppCompatActivity {
         MediaPlayer mPlayer = MediaPlayer.create(this, buttonEffect);
         mPlayer.start();
 
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
+        setNewGame();
+    }
+
+    void setNewGame(){
+        for (int i = 0; i < Values.board_size; i++) {
+            for (int j = 0; j < Values.board_size; j++) {
                 board[i][j].getButton().setImageResource(Values.chess_background_img);
                 board[i][j].setValues(Values.valueEmpty);
             }

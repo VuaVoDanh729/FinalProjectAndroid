@@ -33,7 +33,6 @@ public class ControllerLanGameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_controller_lan_game);
         getSupportActionBar().hide();
         init();
-
     }
 
     void init() {
@@ -68,7 +67,7 @@ public class ControllerLanGameActivity extends AppCompatActivity {
     }
 
     private void settingBoardGame() {
-        int scale_button = Values.board_width / 10 - 10;
+        int scale_button = Values.board_width / Values.board_size - 10;
         for (int i = 0; i < board.length; i++) {
             TableRow row = new TableRow(this);
             for (int j = 0; j < board[0].length; j++) {
