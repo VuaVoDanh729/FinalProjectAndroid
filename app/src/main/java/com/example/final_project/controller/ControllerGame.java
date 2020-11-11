@@ -37,7 +37,7 @@ public class ControllerGame {
         listDeath = new ArrayList<>();
         findGtaphAndDelete(x,y,defaultValue);
         return count;
-    }
+}
 
 
     void doSth(int x, int y, int value){
@@ -103,6 +103,7 @@ public class ControllerGame {
         }
         return false;
     }
+
 
     void changeDeath() {
         for (int i = 0; i < listDeath.size(); i++) {

@@ -9,6 +9,7 @@ public class Controller {
 
     Node[][] table;
 
+    ArrayList<Node> blockList;
     public Controller(Node[][] table) {
         this.table = table;
     }
@@ -21,7 +22,11 @@ public class Controller {
             getGraphs(listNode.get(i), tempList);
             boolean isDeath = checkGraphsDeath(tempList);
             if (isDeath) {
-                changeValue(tempList, Values.death_value);
+                changeValue(tempList, 0 - node.getValue());
+                if(listNode.size() == 3 && tempList.size() ==1){
+                    blockList = tempList;
+                    blockList.get(0).setValues(Values.death_value);
+                }
                 return tempList.size();
             }
         }
@@ -29,9 +34,11 @@ public class Controller {
         getGraphs(node, selfKill);
         boolean isSelfKill = checkGraphsDeath(selfKill);
         if(isSelfKill){
-            changeValue(selfKill, Values.death_value);
+            int value = node.getValue() == Values.black_chess?Values.white_chess:Values.black_chess;
+            changeValue(selfKill, value);
             return 0- selfKill.size();
         }
+
         return 0;
 
     }
@@ -48,8 +55,6 @@ public class Controller {
             }
         }
         return result;
-
-
     }
 
     //Lấy 4 Node xung quanh 1 Node
@@ -80,7 +85,7 @@ public class Controller {
         for (int i = 0; i < graphs.size(); i++) {
             ArrayList<Node> aroundNode = allNodeAround(graphs.get(i));
             for (int j = 0; j < aroundNode.size(); j++) {
-                if (aroundNode.get(j).getValue() == Values.valueEmpty || aroundNode.get(j).getValue() == Values.death_value ) {
+                if (aroundNode.get(j).getValue() == Values.valueEmpty) {
                     return false;
                 }
             }
@@ -106,8 +111,10 @@ public class Controller {
     void changeValue(ArrayList<Node> graphs, int value) {
         for (int i = 0; i < graphs.size(); i++) {
             graphs.get(i).getButton().setImageResource(Values.chess_background_img);
-            graphs.get(i).setValues(value);
+            graphs.get(i).setValues(Values.valueEmpty);
         }
     }
+
+
 }
 

@@ -20,7 +20,7 @@ public class Values {
 
     public static int HP = 100;
 
-    public static int chess_background_img = R.drawable.chessbg;
+    public static int chess_background_img = R.drawable.newchessbackground;
     public static int black_chess = R.drawable.black;
     public static int white_chess = R.drawable.white;
 }

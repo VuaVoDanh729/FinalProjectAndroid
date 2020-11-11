@@ -41,6 +41,7 @@ public class LocalGameActivity extends AppCompatActivity {
     int buttonEffect = R.raw.choose_sound;
     int playSound = R.raw.play_sound;
 
+    static int count = 1;
     Player player1, player2;
 
     int p = 5, s = 5;
@@ -98,7 +99,7 @@ public class LocalGameActivity extends AppCompatActivity {
     }
 
     void Init() {
-        int scale_button = Values.board_width / Values.board_size-10;
+        int scale_button = Values.board_width / Values.board_size;
         for (int i = 0; i < board.length; i++) {
             TableRow row = new TableRow(this);
             for (int j = 0; j < board[0].length; j++) {
@@ -112,7 +113,7 @@ public class LocalGameActivity extends AppCompatActivity {
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (node.getValue() == Values.valueEmpty) {
+                        if (node.getValue() == Values.valueEmpty || node.getValue() == 0 - defaultColor) {
                             MediaPlayer mPlayer = MediaPlayer.create(getApplication(), playSound);
                             mPlayer.start();
                             button.setImageResource(defaultColor);
@@ -156,8 +157,9 @@ public class LocalGameActivity extends AppCompatActivity {
         mTimerRunning = true;
     }
 
+
     void changeSizeHP(ProgressBar pb) {
-        pb.setProgress(pb.getProgress() - hpLost * 10);
+        pb.setProgress(pb.getProgress() - hpLost * 2);
     }
 
 
@@ -218,6 +220,11 @@ public class LocalGameActivity extends AppCompatActivity {
         }
         HP1.setProgress(100);
         HP2.setProgress(100);
+        if(count%10==0){
+            final MediaPlayer mp = MediaPlayer.create(this, R.raw.dungnghien);
+            mp.start();
+        }
+        count++;
     }
 
     public void quitGameOnc(View view) {
